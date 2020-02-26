@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.Random;
 
 public class Renju{
-	static String displayA = "         --> Player O                Player X     ";   //show that it's player 1's turn
-	static String displayB = "             Player O                Player X <-- ";   //show that it's player 2's turn
+	static String displayA = "         --> Player O                Player X     ";  
+	static String displayB = "             Player O                Player X <-- ";
 	static char o = 'O';           // player 1
 	static char x = 'X';           // player 2
 	static int SIZE = 0;       	// size of board: 1-15
@@ -25,14 +25,32 @@ public class Renju{
 		char win = '\0';
 		Renju obj = new Renju();
 
+		// ask, create, initialize, and print the board
 		gameInit(in);
-		// create, initialize, and print the board
-		char board[][] = new char[Renju.SIZE+1][Renju.SIZE+1];
+/**/	char board[][] = new char[Renju.SIZE+1][Renju.SIZE+1];
 		boardInit(board);
 		Renju.turn = turnInit();
-
 		printBoard(board,Renju.turn);
 
+		if(MODE == 1){
+			while(win == '\0'){
+				oneDrop(in,board);
+				printBoard(board,Renju.turn);
+				win = checkWin(win,board);
+			}
+		}else{
+			while(win == '\0'){
+				oneDrop(in,board);
+				printBoard(board,Renju.turn);
+				win = checkWin(win,board);
+				if(win != '\0'){
+					break;
+				}
+				autoDrop(board);
+				printBoard(board,Renju.turn);
+				win = checkWin(win,board);
+			}
+		}
 
 	}
 
@@ -59,7 +77,7 @@ public class Renju{
 			System.out.println("Choose the condition(number of pieces) to win: 1-9");
 			String inputCond = in.nextLine();
 			try{
-				Renju.WINCOND = INteger.parseInt(inputCond);
+				Renju.WINCOND = Integer.parseInt(inputCond);
 			}catch(Exception e){}
 		}
 	}
@@ -103,6 +121,7 @@ public class Renju{
 			}
 			System.out.println("\n");
 		}
+		System.out.print("   Drop:  ");
 	}
 
 	//randomly initialize the first player to start
@@ -120,14 +139,26 @@ public class Renju{
 	static void printTurn(char turn){
 		System.out.println("");
 		if(turn == 'A'){
-			turn = 'B';
+			Renju.turn = 'B';
 			System.out.println(Renju.displayB);
 		}else if(turn == 'B'){
-			turn = 'A';
+			Renju.turn = 'A';
 			System.out.println(Renju.displayA);
 		}
 		System.out.println("");
 	}
 		
+	static void oneDrop(Scanner in, char[][] board){
+		String input = in.nextLine();
+	}
+
+	static void autoDrop(char[][] board){
+
+	}
+
+	static char checkWin(char win, char[][] board){
+		return win;
+	}
+
 }
 
