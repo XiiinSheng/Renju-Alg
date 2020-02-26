@@ -1,7 +1,12 @@
 /************************
-* Renju game
+* 		Renju game
 * Description: two-player board game that one player wins when forms certain number of pieces in a line
-* 			   winning condition: one 
+* 			   winning condition: one player gets 5 pieces(default) in a row/col/diagonal
+* Mode: 	   Single player: one user compete with the computer
+* 		   	   Multiplayer: two users compete with each other
+* Board Size:  configured, choose from 1 to 14
+* Computer:    MyAlg.class
+* Author:      Xin Sheng
 *               
 
 *************************/
@@ -13,12 +18,15 @@ import java.util.Random;
 public class Renju{
 	static String displayA = "         --> Player O                Player X     ";  
 	static String displayB = "             Player O                Player X <-- ";
+	static String displayC = "         --> Player O                Computer X     ";
+	static String displayD = "             Player O                Computer X <-- ";
 	static char o = 'O';           // player 1
 	static char x = 'X';           // player 2
-	static int SIZE = 0;       	// size of board: 1-15
+	static int SIZE = 0;       	// size of board: 1-14
 	static int WINCOND = 5;        // number of pieces to win: 1-9 (by default 5)
 	static int MODE = 0;           // 1 is single player mode, 2 is multiplayer mode
 	static char turn = '\0';
+	static MyAlg comp = new MyAlg();
 	
 	public static void main(String[] args){
 		Scanner in = new Scanner(System.in);
@@ -30,32 +38,19 @@ public class Renju{
 /**/	char board[][] = new char[Renju.SIZE+1][Renju.SIZE+1];
 		boardInit(board);
 		Renju.turn = turnInit();
-		printBoard(board,Renju.turn);
+		printBoard(board);
 
-		if(MODE == 1){
-			while(win == '\0'){
-				oneDrop(in,board);
-				printBoard(board,Renju.turn);
-				win = checkWin(win,board);
-			}
-		}else{
-			while(win == '\0'){
-				oneDrop(in,board);
-				printBoard(board,Renju.turn);
-				win = checkWin(win,board);
-				if(win != '\0'){
-					break;
-				}
-				autoDrop(board);
-				printBoard(board,Renju.turn);
-				win = checkWin(win,board);
-			}
+		while(win == '\0'){
+			oneDrop(in,board);
+			printBoard(board);
+			win = checkWin(win,board);
 		}
 
 	}
 
 		//prompt the player to choose mode, size, winCondition
 	static void gameInit(Scanner in){
+		System.out.println("Welcome to Renju Game (by Xin Sheng)");
 		while(Renju.MODE != 1 && Renju.MODE != 2){
 			System.out.println("Choose mode:\n1: single player mode\n2: multiplayer mode");
 			String inputMode = in.nextLine();
@@ -64,8 +59,8 @@ public class Renju{
 			}catch(Exception e){}
 		}
 
-		while(Renju.SIZE < 1 || Renju.SIZE > 15){
-			System.out.println("Choose the size(length of size) of board: 1-15");
+		while(Renju.SIZE < 1 || Renju.SIZE > 14){
+			System.out.println("Choose the size(length of size) of board: 1-14");
 			String inputSize = in.nextLine();
 			try{
 				Renju.SIZE = Integer.parseInt(inputSize);
@@ -104,11 +99,11 @@ public class Renju{
 	}
 
 	//print the board and role
-	static void printBoard(char[][] board, char turn){
-		for(int i = 0; i < 3; i++){
+	static void printBoard(char[][] board){
+		for(int i = 0; i < 2; i++){
 			System.out.println("");
 		}
-		printTurn(turn);
+		printTurn();
 		System.out.println("");
 		for(int i = 0; i < board.length; i++){
 			System.out.print("        ");
@@ -136,23 +131,59 @@ public class Renju{
 	}
 
 	//print the role of player
-	static void printTurn(char turn){
+	static void printTurn(){
 		System.out.println("");
-		if(turn == 'A'){
+		if(Renju.turn == 'A'){
 			Renju.turn = 'B';
-			System.out.println(Renju.displayB);
-		}else if(turn == 'B'){
+			if(Renju.MODE == 2){
+				System.out.println(Renju.displayB);
+			}else{
+				System.out.println(Renju.displayD);
+			}
+		}else if(Renju.turn == 'B'){
 			Renju.turn = 'A';
-			System.out.println(Renju.displayA);
+			if(Renju.MODE == 2){
+				System.out.println(Renju.displayA);
+			}else{
+				System.out.println(Renju.displayC);
+			}
 		}
 		System.out.println("");
 	}
-		
+	
+	//prompt one drop from user or computer, 
+	//and process it onto the board
 	static void oneDrop(Scanner in, char[][] board){
-		String input = in.nextLine();
-	}
+		String input;
+		int row = -1;
+		int col = -1;
+		while(row < 0 || row >= board.length
+				|| col < 0 || col >= board[1].length
+				|| board[row][col] != '-'){
+			if(Renju.MODE == 1 && Renju.turn == 'B'){
+				input = Renju.comp.autoDrop(board);
+				System.out.println("Computer input: " + input);
+			}else{
+				input = in.nextLine();
+				System.out.println("Your input: " + input);
+			}
+			row = (int)(input.charAt(0)-'@');
+			String column = input.substring(1,input.length());
+			if(column.length() == 1){
+				col = (int)(column.charAt(0)-'0');
+			}else if(column.length() == 2){
+				col = (int)((column.charAt(0)-'0')*10)+(int)((column.charAt(1)-'0'));
+			}else{
+				col = -1;
+			}
+			System.out.println("Row: " + row + " Col: " + col);
+		}
 
-	static void autoDrop(char[][] board){
+		if(Renju.turn == 'A'){
+			board[row][col] = Renju.o;
+		}else{
+			board[row][col] = Renju.x;
+		}
 
 	}
 
