@@ -11,49 +11,61 @@ import java.util.*;
 import java.util.Random;
 
 public class Renju{
-	static String displayA = "  -> Player 1                 Player 2    ";
-	static String displayB = "     Player 1                 Player 2 <- ";
-	static char a = 'O';           // player 1
-	static char b = 'X';           // player 2
-	static int SIZE = 0;       	// size of board: 1-9
-	static int WINCOND = 0;        // number of pieces to win: 1-9
+	static String displayA = "         --> Player O                Player X     ";   //show that it's player 1's turn
+	static String displayB = "             Player O                Player X <-- ";   //show that it's player 2's turn
+	static char o = 'O';           // player 1
+	static char x = 'X';           // player 2
+	static int SIZE = 0;       	// size of board: 1-15
+	static int WINCOND = 5;        // number of pieces to win: 1-9 (by default 5)
 	static int MODE = 0;           // 1 is single player mode, 2 is multiplayer mode
+	static char turn = '\0';
 	
 	public static void main(String[] args){
 		Scanner in = new Scanner(System.in);
 		char win = '\0';
-		char round = '\0';
 		Renju obj = new Renju();
 
-		//prompt the player to choose mode
-		while(Renju.MODE != 1 && Renju.MODE != 2){
-			System.out.println("Choose mode:\n1: single player mode\n2: multiplayer mode");
-			Renju.MODE = in.nextInt();
-			in.nextLine();
-		}
-
-		while(Renju.SIZE < 1 || Renju.SIZE > 9){
-			System.out.println("Choose the size(length of size) of board: 1-9");
-			Renju.SIZE = in.nextInt();
-			in.nextLine();
-		}
-
-		while(Renju.WINCOND < 1 || Renju.WINCOND > 9){
-			System.out.println("Choose the condition(number of pieces) to win: 1-9");
-			Renju.WINCOND = in.nextInt();
-			in.nextLine();
-		}
-
+		gameInit(in);
 		// create, initialize, and print the board
 		char board[][] = new char[Renju.SIZE+1][Renju.SIZE+1];
 		boardInit(board);
-		round = roundInit();
+		Renju.turn = turnInit();
 
-		printBoard(board,round);
+		printBoard(board,Renju.turn);
 
 
 	}
 
+		//prompt the player to choose mode, size, winCondition
+	static void gameInit(Scanner in){
+		while(Renju.MODE != 1 && Renju.MODE != 2){
+			System.out.println("Choose mode:\n1: single player mode\n2: multiplayer mode");
+			String inputMode = in.nextLine();
+			try{
+				Renju.MODE = Integer.parseInt(inputMode);
+			}catch(Exception e){}
+		}
+
+		while(Renju.SIZE < 1 || Renju.SIZE > 15){
+			System.out.println("Choose the size(length of size) of board: 1-15");
+			String inputSize = in.nextLine();
+			try{
+				Renju.SIZE = Integer.parseInt(inputSize);
+			}catch(Exception e){}
+		}
+
+		//set the default WINCOND to 5 pieces, so it's a useless loop
+		while(Renju.WINCOND < 1 || Renju.WINCOND > 9){
+			System.out.println("Choose the condition(number of pieces) to win: 1-9");
+			String inputCond = in.nextLine();
+			try{
+				Renju.WINCOND = INteger.parseInt(inputCond);
+			}catch(Exception e){}
+		}
+	}
+
+
+	//initialize the empty board
 	static void boardInit(char[][] board){
 		char row = '@';
 		int col = 1;
@@ -73,24 +85,30 @@ public class Renju{
 		board[0][0] = ' ';
 	}
 
-	static void printBoard(char[][] board, char round){
+	//print the board and role
+	static void printBoard(char[][] board, char turn){
 		for(int i = 0; i < 3; i++){
 			System.out.println("");
 		}
-		printRound(round);
+		printTurn(turn);
 		System.out.println("");
 		for(int i = 0; i < board.length; i++){
-			System.out.print("           ");
+			System.out.print("        ");
 			for(int j = 0; j < board[i].length; j++){
-				System.out.print(board[i][j] + " ");
+				if(board[i][j] > '9' && board[i][j] < '@'){
+					System.out.print("1" + (char)(board[i][j]-10) + "  ");
+				}else{
+					System.out.print(board[i][j] + "   ");
+				}
 			}
-			System.out.println("");
+			System.out.println("\n");
 		}
 	}
 
-	static char roundInit(){
+	//randomly initialize the first player to start
+	static char turnInit(){
 		Random rand = new Random();
-		int i = rand.nextInt(1);
+		int i = rand.nextInt(2);
 		if(i == 0){
 			return 'A';
 		}else{
@@ -98,12 +116,15 @@ public class Renju{
 		}
 	}
 
-	static void printRound(char round){
+	//print the role of player
+	static void printTurn(char turn){
 		System.out.println("");
-		if(round == 'A'){
-			System.out.println(Renju.displayA);
-		}else if(round == 'B'){
+		if(turn == 'A'){
+			turn = 'B';
 			System.out.println(Renju.displayB);
+		}else if(turn == 'B'){
+			turn = 'A';
+			System.out.println(Renju.displayA);
 		}
 		System.out.println("");
 	}
