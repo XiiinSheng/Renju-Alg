@@ -3,9 +3,8 @@
 * Description: two-player board game that one player wins when forms certain number of pieces in a line
 * 			   winning condition: one player gets 5 pieces(default) in a row/col/diagonal
 * Mode: 	   Single player: one user compete with the computer
-* 		   	   Multiplayer: two users compete with each other
-* Board Size:  configured, choose from 1 to 14
-* Computer:    MyAlg.class
+ 		   	   Multiplayer: two users compete with each other
+* Board Size:  configured, choose from 5 to 16
 * Author:      Xin Sheng
 *               
 
@@ -22,7 +21,7 @@ public class Renju{
 	static String displayD = "             Player O                Computer X <-- ";
 	static char o = 'O';           // player 1
 	static char x = 'X';           // player 2
-	static int SIZE = 0;       	// size of board: 1-14
+	static int SIZE = 0;       	// size of board: WINCOND-16
 	static int WINCOND = 5;        // number of pieces to win: 1-9 (by default 5)
 	static int MODE = 0;           // 1 is single player mode, 2 is multiplayer mode
 	static char turn = '\0';
@@ -39,12 +38,16 @@ public class Renju{
 		boardInit(board);
 		Renju.turn = turnInit();
 		printBoard(board);
+		System.out.print("   Drop:   ");
 
 		while(win == '\0'){
 			oneDrop(in,board);
 			printBoard(board);
+			System.out.print("   Drop:   ");
 			win = checkWin(win,board);
 		}
+		printWinner(win);
+
 
 	}
 
@@ -59,8 +62,8 @@ public class Renju{
 			}catch(Exception e){}
 		}
 
-		while(Renju.SIZE < 1 || Renju.SIZE > 14){
-			System.out.println("Choose the size(length of size) of board: 1-14");
+		while(Renju.SIZE < Renju.WINCOND || Renju.SIZE > 16){
+			System.out.println("Choose the size(length of size) of board: " + Renju.WINCOND + "-16");
 			String inputSize = in.nextLine();
 			try{
 				Renju.SIZE = Integer.parseInt(inputSize);
@@ -100,7 +103,7 @@ public class Renju{
 
 	//print the board and role
 	static void printBoard(char[][] board){
-		for(int i = 0; i < 2; i++){
+		for(int i = 0; i < 1; i++){
 			System.out.println("");
 		}
 		printTurn();
@@ -108,7 +111,7 @@ public class Renju{
 		for(int i = 0; i < board.length; i++){
 			System.out.print("        ");
 			for(int j = 0; j < board[i].length; j++){
-				if(board[i][j] > '9' && board[i][j] < '@'){
+				if(board[i][j] > '9' && board[i][j] <= '@'){
 					System.out.print("1" + (char)(board[i][j]-10) + "  ");
 				}else{
 					System.out.print(board[i][j] + "   ");
@@ -116,7 +119,6 @@ public class Renju{
 			}
 			System.out.println("\n");
 		}
-		System.out.print("   Drop:  ");
 	}
 
 	//randomly initialize the first player to start
@@ -154,10 +156,11 @@ public class Renju{
 	//prompt one drop from user or computer, 
 	//and process it onto the board
 	static void oneDrop(Scanner in, char[][] board){
-		String input;
+		String input = "";
 		int row = -1;
 		int col = -1;
-		while(row < 0 || row >= board.length
+		while(input.length() <= 1 || input.length() > 3
+				|| row < 0 || row >= board.length
 				|| col < 0 || col >= board[1].length
 				|| board[row][col] != '-'){
 			if(Renju.MODE == 1 && Renju.turn == 'B'){
@@ -166,6 +169,9 @@ public class Renju{
 			}else{
 				input = in.nextLine();
 				System.out.println("Your input: " + input);
+			}
+			if(input.length() <= 1 || input.equals(null)){
+				continue;
 			}
 			row = (int)(input.charAt(0)-'@');
 			String column = input.substring(1,input.length());
@@ -187,8 +193,100 @@ public class Renju{
 
 	}
 
+	//check if anyone wins
 	static char checkWin(char win, char[][] board){
+		char symbol[] = {Renju.o, Renju.x};
+		//first check O then check X
+		for(int k = 0; k < symbol.length; k++){
+			//check horizontally and vertically
+			for(int i = 1; i < board.length; i++){
+				int countH = 0;
+				int countV = 0;
+				for(int j = 1; j < board.length; j++){
+					if(board[i][j] == symbol[k]){
+						countH++;
+					}else{
+						countH = 0;
+					}
+					if(board[j][i] == symbol[k]){
+						countV++;
+					}else{
+						countV = 0;
+					}
+					if(countH >= Renju.WINCOND || countV >= Renju.WINCOND){
+						return symbol[k];
+					}
+				}
+			}
+
+			//check diagonally, upper triangle
+			for(int i = 1; i < board.length; i++){
+				int countUL = 0; 
+				int countUR = 0;
+				int countBL = 0;
+				int countBR = 0;
+				for(int j = 0; j+i < board.length; j++){
+					//from up left to bottom right(upper triangle)
+					if(board[1+j][i+j] == symbol[k]){
+						countUR++;
+					}else{
+						countUR = 0;
+					}
+					//from up right to bottom left(upper triangle)
+					if(board[1+j][board.length-i-j] == symbol[k]){
+						countUL++;
+					}else{
+						countUL = 0;
+					}
+					//from bottom left to up right(lower triangle)
+					if(board[board.length-1-j][i+j] == symbol[k]){
+						countBR++;
+					}else{
+						countBR = 0;
+					}
+					//from bottom right to up left(lower triangle)
+					if(board[board.length-1-j][board.length-i-j] == symbol[k]){
+						countBL++;
+					}else{
+						countBL = 0;
+					}
+					if(countUR >= Renju.WINCOND 
+						|| countUL >= Renju.WINCOND
+						|| countBR >= Renju.WINCOND
+						|| countBL >= Renju.WINCOND){
+						return symbol[k];
+					}
+				}
+			}
+
+
+		}
+
+		//check if the board is full
+		//if yes, return 'D' (draw)
+		int emptyCount = 0;
+		for(int i = 1; i < board.length; i++){
+			for(int j = 1; j < board.length; j++){
+				if(board[i][j] == '-'){
+					emptyCount++;
+				}
+			}
+		}
+		if(emptyCount == 0){
+			return 'D';
+		}			
+		
 		return win;
+	}
+
+	static void printWinner(char win){
+		if(win == 'D'){
+			System.out.println("It's a draw! Good Game!");
+		}else if(Renju.MODE == 1 && win == 'X'){
+			System.out.println("The computer wins. Good luck next time!");
+		}else{
+			System.out.println("Player " + win + " wins! Congratulations!");
+		}
 	}
 
 }
