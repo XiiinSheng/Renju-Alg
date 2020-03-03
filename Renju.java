@@ -164,7 +164,15 @@ public class Renju{
 				|| col < 0 || col >= board[1].length
 				|| board[row][col] != '-'){
 			if(Renju.MODE == 1 && Renju.turn == 'B'){
-				input = Renju.comp.autoDrop(board);
+				//copy the board to a new array boardIn[][]
+				char[][] boardIn = new char[board.length][board.length];
+				for(int i = 0; i < board.length; i++){
+					for(int j = 0; j < board.length; j++){
+						boardIn[i][j] = board[i][j];
+					}
+				}
+
+				input = Renju.comp.autoDrop(boardIn);
 				System.out.println("Computer input: " + input);
 			}else{
 				input = in.nextLine();

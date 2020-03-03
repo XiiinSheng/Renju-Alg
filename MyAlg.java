@@ -1,8 +1,6 @@
 import java.util.Random;
 
 public class MyAlg{
-	char[][] boardIn;
-	char[][] boardOut;
 	static char me = 'X';
 	static char rival = 'O';
 
@@ -17,16 +15,16 @@ public class MyAlg{
 */
 
 	//The main method to make the drop to Renju.java
-	public String autoDrop(char[][] board){
-		this.boardIn = board;
+	public String autoDrop(char[][] initialBoard){
 		int index[] = new int[2];
 
-/**/	int depth = 1;
+/**/	int depth = 2;
 
-		int score = this.bestMove(index,board,depth,true);
+		int score = this.bestMove(index,initialBoard,depth,true);
 
-		char row = (char)(index[0]+'A');
-		int col = index[1]+1;
+		char row = (char)(index[0]+'@');
+		int col = index[1];
+/*debug*/   System.out.println("index: " + index[0] + " " + index[1]);
 		String result = "";
 
 /*debug*/		System.out.println("score of this move = " + score);
@@ -36,22 +34,27 @@ public class MyAlg{
 
 	//MinMax alg for best move
 	public int bestMove(int[] index, char[][] boardIn, int depth, boolean me){
+		char[][] boardStatic = new char[boardIn.length][boardIn.length];
+		copy(boardStatic,boardIn);
 		//stop the recursion by returning the board without change
-		if((depth == 0) || (isFull(boardIn))){
+		if((depth == 0) || (isFull(boardStatic))){
 			return score(boardIn);
 		}
 		if(me == true){
 			int value = -99999999;
 			for(int i = 0; i < boardIn.length; i++){
 				for(int j = 0; j < boardIn[0].length; j++){
-					char[][] board = boardIn;
-					board[i][j] = 'X';
-					int score = bestMove(index, board, depth-1, false);
-					if(value <= score){
-						boardIn = board;
-						index[0] = i;
-						index[1] = j;
-						value = score;
+					if(boardStatic[i][j] == '-'){
+						char[][] board1 = new char[boardStatic.length][boardStatic.length];
+						copy(board1,boardStatic);
+						board1[i][j] = 'X';
+						int score = bestMove(index, board1, depth-1, false);
+						if(value < score){
+							boardIn = board1;
+							index[0] = i;
+							index[1] = j;
+							value = score;
+						}
 					}
 				}
 			}
@@ -60,12 +63,15 @@ public class MyAlg{
 			int value = 99999999;
 			for(int i = 0; i < boardIn.length; i++){
 				for(int j = 0; j < boardIn[0].length; j++){
-					char[][] board = boardIn;
-					board[i][j] = 'O';
-					int score = bestMove(index, board, depth-1, true);
-					if(value >= score){
-						boardIn = board;
-						value = score;
+					if(boardStatic[i][j] == '-'){
+						char[][] board2 = new char[boardStatic.length][boardStatic.length];
+						copy(board2,boardStatic);
+						board2[i][j] = 'O';
+						int score = bestMove(index, board2, depth-1, true);
+						if(value > score){
+							boardIn = board2;
+							value = score;
+						}
 					}
 				}
 			}
@@ -78,9 +84,9 @@ public class MyAlg{
 	//FIXME:check the score of the board
 	static int score(char[][] board){
 		char symbol[] = {MyAlg.rival, MyAlg.me};
-		int[] me = new int[20];
+		int[] me = new int[30];
 		int mecount = 0;
-		int[] rival = new int[20];
+		int[] rival = new int[30];
 		int ricount = 0;
 		//first check O then check X
 		for(int k = 0; k < symbol.length; k++){
@@ -89,17 +95,23 @@ public class MyAlg{
 			for(int i = 1; i < board.length; i++){
 				int countH = 0;
 				int countV = 0;
+				int emptySideV = 0;
 /*debug*///       System.out.println("");
-			for(int j = 1; j < board.length; j++){
+				for(int j = 1; j < board.length; j++){
 					//horizontal
-					if(board[i][j] == symbol[k] && 
-					   j != 1 && 
-					   board[i][j-countH-1] == '-'){
+					int emptySideH = 0;
+					if(board[i][j] == symbol[k]){
 						countH++;
+						if(j != 1 && 
+					   board[i][j-1] == '-'){
+						emptySideH++;
 /*debug*/  //				System.out.println("CountH++, now countH is " + countH);
 					}else{
 						if(countH != 0 &&
 						   board[i][j] == '-'){
+						   	emptySideH++;
+						}
+						if(emptySideH != 0){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countH;
 								ricount++;
@@ -110,6 +122,7 @@ public class MyAlg{
 						}
 /*debug*/	//					System.out.print(countH + " ");
 						countH = 0;
+						emptySideH = 0;
 					}
 					//vertical
 					if(board[j][i] == symbol[k] && 
@@ -128,6 +141,7 @@ public class MyAlg{
 							}
 						}
 						countV = 0;
+					}
 					}
 				}
 			}
@@ -233,7 +247,8 @@ public class MyAlg{
 			for(int j = 0; j < rival.length; j++){
 				System.out.println(rival[j] + " ");
 			}
-*/		for(int i = 0; i < me.length; i++){
+*/
+		for(int i = 0; i < me.length; i++){
 			if(me[i] == 1){
 				score = score + 1;
 			}else if(me[i] == 2){
@@ -324,12 +339,41 @@ public class MyAlg{
 		}
 	}
 
+	static void copy(char[][] a, char[][] b){
+		for(int i = 0; i < b.length; i++){
+			for(int j = 0; j < b.length; j++){
+				a[i][j] = b[i][j];
+			}
+		}
+	}
 
 	public static void main(String[] args){
 		MyAlg obj = new MyAlg();
-		System.out.println(score(obj.testFiveR));
-		
-		System.out.println(obj.autoDrop(obj.test));
+
+/*
+char[][] board = new char[16][16];
+char row = '@';
+int col = 1;
+for(int i = 0; i < board.length; i++){
+for(int j = 0; j < board[i].length; j++){
+if(j == 0){
+board[i][j] = row;
+row = (char)(row+1);
+}else if(i == 0){
+board[i][j] = (char)(col+'0');
+col++;
+}else{
+board[i][j] = '-';
+}
+}
+}
+board[0][0] = ' ';
+board[5][5] = 'O';
+		System.out.println(score(board));
+*/
+
+//		System.out.println(obj.autoDrop(board));
+		System.out.println(obj.autoDrop(obj.testFourR));
 	}
 
 
@@ -345,7 +389,7 @@ public class MyAlg{
 	char[][] testFiveR = {{' ','1','2','3','4','5','6','7'},
 					 {'A','-','-','-','-','-','-','-'},
 					 {'B','-','-','-','-','-','-','-'},
-					 {'C','-','O','O','O','O','O','-'},
+					 {'C','-','O','-','-','-','-','-'},
 					 {'D','-','-','-','-','-','-','-'},
 					 {'E','-','-','-','-','-','-','-'},
 					 {'F','-','-','-','-','-','-','-'},
@@ -364,7 +408,7 @@ public class MyAlg{
 	char[][] testFourR = {{' ','1','2','3','4','5','6'},
 					 {'A','-','-','-','-','-','-'},
 					 {'B','-','-','-','-','-','-'},
-					 {'C','-','O','O','O','O','O'},
+					 {'C','-','-','O','O','O','O'},
 					 {'D','-','-','-','-','-','-'},
 					 {'E','-','-','-','-','-','-'},
 					 {'F','-','-','-','-','-','-'}};
