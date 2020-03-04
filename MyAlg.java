@@ -5,7 +5,8 @@ public class MyAlg{
 	static char rival = 'O';
 
 
-/*
+/* Original random drop method
+
 	public String autoDrop(char[][] board){
 		char random1 = (char)(rand.nextInt(board.length-1)+'A');
 		int random2 = rand.nextInt(board.length-1)+1;
@@ -19,8 +20,20 @@ public class MyAlg{
 		int index[] = new int[2];
 
 /**/	int depth = 2;
+		int score = 0;
 
-		int score = this.bestMove(index,initialBoard,depth,true);
+		if(isAlmostEmpty(initialBoard)){
+			int i = 1;
+			index[0] = initialBoard.length/2;
+			index[1] = index[0];
+			while(initialBoard[index[0]][index[1]] != '-'){
+				index[0] = index[0]+i;
+				index[1] = index[0];
+				i++;
+			}
+		}else{
+			score = this.bestMove(index,initialBoard,depth,true);
+		}
 
 		char row = (char)(index[0]+'@');
 		int col = index[1];
@@ -41,9 +54,9 @@ public class MyAlg{
 			return score(boardIn);
 		}
 		if(me == true){
-			int value = -99999999;
-			for(int i = 0; i < boardIn.length; i++){
-				for(int j = 0; j < boardIn[0].length; j++){
+			int value = -999999999;
+			for(int i = 1; i < boardIn.length; i++){
+				for(int j = 1; j < boardIn[0].length; j++){
 					if(boardStatic[i][j] == '-'){
 						char[][] board1 = new char[boardStatic.length][boardStatic.length];
 						copy(board1,boardStatic);
@@ -60,9 +73,9 @@ public class MyAlg{
 			}
 			return value;
 		}else{
-			int value = 99999999;
-			for(int i = 0; i < boardIn.length; i++){
-				for(int j = 0; j < boardIn[0].length; j++){
+			int value = 999999999;
+			for(int i = 1; i < boardIn.length; i++){
+				for(int j = 1; j < boardIn[0].length; j++){
 					if(boardStatic[i][j] == '-'){
 						char[][] board2 = new char[boardStatic.length][boardStatic.length];
 						copy(board2,boardStatic);
@@ -84,9 +97,9 @@ public class MyAlg{
 	//FIXME:check the score of the board
 	static int score(char[][] board){
 		char symbol[] = {MyAlg.rival, MyAlg.me};
-		int[] me = new int[30];
+		int[] me = new int[50];
 		int mecount = 0;
-		int[] rival = new int[30];
+		int[] rival = new int[50];
 		int ricount = 0;
 		//first check O then check X
 		for(int k = 0; k < symbol.length; k++){
@@ -95,23 +108,41 @@ public class MyAlg{
 			for(int i = 1; i < board.length; i++){
 				int countH = 0;
 				int countV = 0;
+				int emptySideH = 0;
 				int emptySideV = 0;
 /*debug*///       System.out.println("");
 				for(int j = 1; j < board.length; j++){
 					//horizontal
-					int emptySideH = 0;
 					if(board[i][j] == symbol[k]){
 						countH++;
 						if(j != 1 && 
-					   board[i][j-1] == '-'){
-						emptySideH++;
+					       board[i][j-1] == '-'){
+							emptySideH++;
+						}
+						if(countH != 0 && (emptySideH != 0) && (j == board.length-1)){
+							if(symbol[k] == 'O'){
+								rival[ricount] = countH;
+								ricount++;
+							}else{
+								me[mecount] = countH;
+								mecount++;
+							}
+						}
+	
 /*debug*/  //				System.out.println("CountH++, now countH is " + countH);
 					}else{
 						if(countH != 0 &&
 						   board[i][j] == '-'){
 						   	emptySideH++;
 						}
-						if(emptySideH != 0){
+						if(countH != 0 && (emptySideH != 0 || countH >= 5)){
+/*							int num = 0;
+							if(emptySideH == 2 && countH == 3){
+								num = countH+10;
+							}else{
+								num = countH;
+							}
+*/
 							if(symbol[k] == 'O'){
 								rival[ricount] = countH;
 								ricount++;
@@ -122,16 +153,32 @@ public class MyAlg{
 						}
 /*debug*/	//					System.out.print(countH + " ");
 						countH = 0;
+/*debug*/// 				System.out.println("EmptySideH = " + emptySideH);
 						emptySideH = 0;
 					}
 					//vertical
-					if(board[j][i] == symbol[k] && 
-				       j != 1 &&
-					   board[j-countV-1][i] == '-'){
+					if(board[j][i] == symbol[k]){
 						countV++;
+						if(j != 1 &&
+						   board[j-1][i] == '-'){
+							emptySideV++;
+						}
+						if(countV != 0 && emptySideV != 0 && j == board.length-1){
+							if(symbol[k] == 'O'){
+								rival[ricount] = countV;
+								ricount++;
+							}else{
+								me[mecount] = countV;
+								mecount++;
+							}
+						}
+	
 					}else{
 						if(countV != 0 &&
 						   board[j][i] == '-'){
+						   	emptySideV++;
+						}
+						if(countV != 0 && (emptySideV != 0 || countV >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countV;
 								ricount++;
@@ -141,7 +188,7 @@ public class MyAlg{
 							}
 						}
 						countV = 0;
-					}
+						emptySideV = 0;
 					}
 				}
 			}
@@ -151,15 +198,34 @@ public class MyAlg{
 				int countUR = 0;
 				int countBL = 0;
 				int countBR = 0;
+				int emptySideUL = 0;
+				int emptySideUR = 0;
+				int emptySideBL = 0;
+				int emptySideBR = 0;
 				for(int j = 0; j+i < board.length; j++){
 					
 					//from up left to bottom right(upper triangle)
-					if(board[1+j][i+j] == symbol[k] &&
-					   board[j-countUR][i+j-countUR-1] == '-'){
+					if(board[1+j][i+j] == symbol[k]){
 						countUR++;
+						if(board[j][i+j-1] == '-'){
+							emptySideUR++;
+						}
+						if(countUR != 0 && emptySideUR != 0 && i+j == board.length-1){
+							if(symbol[k] == 'O'){
+								rival[ricount] = countUR;
+								ricount++;
+							}else{
+								me[mecount] = countUR;
+								mecount++;
+							}
+						}
+	
 					}else{
 						if(countUR != 0 &&
 						   board[1+j][i+j] == '-'){
+							emptySideUR++;
+						}
+						if(countUR != 0 && (emptySideUR != 0 || countUR >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countUR;
 								ricount++;
@@ -169,15 +235,32 @@ public class MyAlg{
 							}
 						}
 						countUR = 0;
+						emptySideUR = 0;
 					}
 					//from up right to bottom left(upper triangle)
-					if(board[1+j][board.length-i-j] == symbol[k] &&
-					   board.length-i-j+countUL+1 != board.length &&
-					   board[j-countUL][board.length-i-j+countUL+1] == '-'){
+					if(board[1+j][board.length-i-j] == symbol[k]){
 						countUL++;
+						if(board.length-i-j+1 != board.length &&
+					       board[j][board.length-i-j+1] == '-'){
+							emptySideUL++;
+						}
+						if(countUL != 0 && emptySideUL != 0 && board.length-i-j == 1){
+							if(symbol[k] == 'O'){
+								rival[ricount] = countUL;
+								ricount++;
+							}else{
+								me[mecount] = countUL;
+								mecount++;
+							}
+						}
+	
+
 					}else{
 						if(countUL != 0 &&
 						   board[1+j][board.length-i-j] == '-'){
+						   	emptySideUL++;
+						}
+						if(countUL != 0 && (emptySideUL != 0 || countUL >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countUL;
 								ricount++;
@@ -187,15 +270,31 @@ public class MyAlg{
 							}
 						}
 						countUL = 0;
+						emptySideUL = 0;
 					}
 					//from bottom left to up right(lower triangle)
-					if(board[board.length-1-j][i+j] == symbol[k] &&
-					   board.length-j+countBR != board.length &&
-					   board[board.length-j+countBR][i+j-countBR-1] == '-'){
+					if(board[board.length-1-j][i+j] == symbol[k]){
 						countBR++;
+						if(board.length-j != board.length &&
+  					   	   board[board.length-j][i+j-1] == '-'){
+							emptySideBR++;
+						}
+						if(countBR != 0 && emptySideBR != 0 && i+j == board.length-1){
+							if(symbol[k] == 'O'){
+								rival[ricount] = countBR;
+								ricount++;
+							}else{
+								me[mecount] = countBR;
+								mecount++;
+							}
+						}
+	
 					}else{
 						if(countBR != 0 &&
 						   board[board.length-j-1][i+j] == '-'){
+						   	emptySideBR++;
+						}
+						if(countBR != 0 && (emptySideBR != 0 || countBR >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countBR;
 								ricount++;
@@ -205,16 +304,32 @@ public class MyAlg{
 							}
 						}
 						countBR = 0;
+						emptySideBR = 0;
 					}
 					//from bottom right to up left(lower triangle)
-					if(board[board.length-1-j][board.length-i-j] == symbol[k] &&
-					   board.length-j+countBL != board.length &&
-					   board.length-i-j+1+countBL != board.length &&
-					   board[board.length-j+countBL][board.length-i-j+1+countBL] == '-'){
+					if(board[board.length-1-j][board.length-i-j] == symbol[k]){
 						countBL++;
+						if(board.length-j != board.length &&
+					       board.length-i-j+1 != board.length &&
+					       board[board.length-j][board.length-i-j+1] == '-'){
+							emptySideBL++;
+						}
+						if(countBL != 0 && emptySideBL != 0 && board.length-i-j == 1){
+							if(symbol[k] == 'O'){
+								rival[ricount] = countBL;
+								ricount++;
+							}else{
+								me[mecount] = countBL;
+								mecount++;
+							}
+						}
+	
 					}else{
 						if(countBL != 0 &&
 						   board[board.length-j-1][board.length-i-j] == '-'){
+						   	emptySideBL++;
+						}
+						if(countBL != 0 && (emptySideBL != 0 || countBL >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countBL;
 								ricount++;
@@ -225,6 +340,7 @@ public class MyAlg{
 						}
 	
 						countBL = 0;
+						emptySideBL = 0;
 					}
 				}
 			}
@@ -245,19 +361,19 @@ public class MyAlg{
 			System.out.println("");
 			System.out.print("rival: ");
 			for(int j = 0; j < rival.length; j++){
-				System.out.println(rival[j] + " ");
+				System.out.print(rival[j] + " ");
 			}
 */
 		for(int i = 0; i < me.length; i++){
 			if(me[i] == 1){
-				score = score + 1;
+				score = score + 10;
 			}else if(me[i] == 2){
 				two++;
 			}else if(me[i] == 3){
 				three++;
 			}else if(me[i] == 4){
 				four++;
-			}else if(me[i] == 5){
+			}else if(me[i] >= 5){
 				score = 99999999;
 			}
 		}
@@ -269,15 +385,15 @@ public class MyAlg{
 		}
 		//add the score of continuous three
 		if(three == 1){
-			score = score + 1000;
+			score = score + 3000;
 		}else if(three == 2){
-			score = score + 2000;
+			score = score + 6000;
 		}
 		//add the score of continuous four
 		if(four == 1){
-			score = score + 5000;
-		}else if(four == 2){
 			score = score + 10000;
+		}else if(four == 2){
+			score = score + 20000;
 		}
 
 /*debug*///	System.out.println("me: " + score);
@@ -287,14 +403,14 @@ public class MyAlg{
 		four = 0;
 		for(int i = 0; i < rival.length; i++){
 			if(rival[i] == 1){
-				score = score - 1;
+				score = score - 11;
 			}else if(rival[i] == 2){
 				two++;
 			}else if(rival[i] == 3){
 				three++;
 			}else if(rival[i] == 4){
 				four++;
-			}else if(rival[i] == 5){
+			}else if(rival[i] >= 5){
 				score = -99999999;
 			}
 		}
@@ -306,15 +422,15 @@ public class MyAlg{
 		}
 		//add the score of continuous three
 		if(three == 1){
-			score = score - 1000;
+			score = score - 3000;
 		}else if(three == 2){
-			score = score - 2000;
+			score = score - 6000;
 		}
 		//add the score of continuous four
 		if(four == 1){
-			score = score - 5000;
-		}else if(four == 2){
 			score = score - 10000;
+		}else if(four == 2){
+			score = score - 20000;
 		}
 
 /*debug*/// System.out.println("Final: " + score);
@@ -347,6 +463,21 @@ public class MyAlg{
 		}
 	}
 
+	static boolean isAlmostEmpty(char[][] board){
+		int fullSpot = 0;
+		for(int i = 1; i < board.length; i++){
+			for(int j = 1; j < board.length; j++){
+				if(board[i][j] != '-'){
+					fullSpot++;
+				}
+				if(fullSpot > 1){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	public static void main(String[] args){
 		MyAlg obj = new MyAlg();
 
@@ -373,6 +504,8 @@ board[5][5] = 'O';
 */
 
 //		System.out.println(obj.autoDrop(board));
+		
+		System.out.println(score(obj.testFourR));
 		System.out.println(obj.autoDrop(obj.testFourR));
 	}
 
@@ -407,10 +540,10 @@ board[5][5] = 'O';
 
 	char[][] testFourR = {{' ','1','2','3','4','5','6'},
 					 {'A','-','-','-','-','-','-'},
-					 {'B','-','-','-','-','-','-'},
-					 {'C','-','-','O','O','O','O'},
-					 {'D','-','-','-','-','-','-'},
-					 {'E','-','-','-','-','-','-'},
+					 {'B','O','-','-','-','-','-'},
+					 {'C','-','O','-','-','-','-'},
+					 {'D','-','-','O','-','-','-'},
+					 {'E','-','-','-','O','-','-'},
 					 {'F','-','-','-','-','-','-'}};
 
 
