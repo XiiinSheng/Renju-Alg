@@ -97,9 +97,9 @@ public class MyAlg{
 	//FIXME:check the score of the board
 	static int score(char[][] board){
 		char symbol[] = {MyAlg.rival, MyAlg.me};
-		int[] me = new int[50];
+		int[] me = new int[100];
 		int mecount = 0;
-		int[] rival = new int[50];
+		int[] rival = new int[100];
 		int ricount = 0;
 		//first check O then check X
 		for(int k = 0; k < symbol.length; k++){
@@ -136,18 +136,18 @@ public class MyAlg{
 						   	emptySideH++;
 						}
 						if(countH != 0 && (emptySideH != 0 || countH >= 5)){
-/*							int num = 0;
+							int num = 0;
 							if(emptySideH == 2 && countH == 3){
-								num = countH+10;
+								num = 10;
 							}else{
 								num = countH;
 							}
-*/
+							
 							if(symbol[k] == 'O'){
-								rival[ricount] = countH;
+								rival[ricount] = num;
 								ricount++;
 							}else{
-								me[mecount] = countH;
+								me[mecount] = num;
 								mecount++;
 							}
 						}
@@ -179,11 +179,18 @@ public class MyAlg{
 						   	emptySideV++;
 						}
 						if(countV != 0 && (emptySideV != 0 || countV >= 5)){
+								int num = 0;
+							if(emptySideV == 2 && countV == 3){
+								num = 10;
+							}else{
+								num = countV;
+							}
+
 							if(symbol[k] == 'O'){
-								rival[ricount] = countV;
+								rival[ricount] = num;
 								ricount++;
 							}else{
-								me[mecount] = countV;
+								me[mecount] = num;
 								mecount++;
 							}
 						}
@@ -226,11 +233,18 @@ public class MyAlg{
 							emptySideUR++;
 						}
 						if(countUR != 0 && (emptySideUR != 0 || countUR >= 5)){
+							int num = 0;
+							if(emptySideUR == 2 && countUR == 3){
+								num = 10;
+							}else{
+								num = countUR;
+							}
+	
 							if(symbol[k] == 'O'){
-								rival[ricount] = countUR;
+								rival[ricount] = num;
 								ricount++;
 							}else{
-								me[mecount] = countUR;
+								me[mecount] = num;
 								mecount++;
 							}
 						}
@@ -261,11 +275,18 @@ public class MyAlg{
 						   	emptySideUL++;
 						}
 						if(countUL != 0 && (emptySideUL != 0 || countUL >= 5)){
+							int num = 0;
+							if(emptySideUL == 2 && countUL == 3){
+								num = 10;
+							}else{
+								num = countUL;
+							}
+	
 							if(symbol[k] == 'O'){
-								rival[ricount] = countUL;
+								rival[ricount] = num;
 								ricount++;
 							}else{
-								me[mecount] = countUL;
+								me[mecount] = num;
 								mecount++;
 							}
 						}
@@ -295,11 +316,18 @@ public class MyAlg{
 						   	emptySideBR++;
 						}
 						if(countBR != 0 && (emptySideBR != 0 || countBR >= 5)){
+							int num = 0;
+							if(emptySideBR == 2 && countBR == 3){
+								num = 10;
+							}else{
+								num = countBR;
+							}
+	
 							if(symbol[k] == 'O'){
-								rival[ricount] = countBR;
+								rival[ricount] = num;
 								ricount++;
 							}else{
-								me[mecount] = countBR;
+								me[mecount] = num;
 								mecount++;
 							}
 						}
@@ -330,11 +358,18 @@ public class MyAlg{
 						   	emptySideBL++;
 						}
 						if(countBL != 0 && (emptySideBL != 0 || countBL >= 5)){
+							int num = 0;
+							if(emptySideBL == 2 && countBL == 3){
+								num = 10;
+							}else{
+								num = countBL;
+							}
+	
 							if(symbol[k] == 'O'){
-								rival[ricount] = countBL;
+								rival[ricount] = num;
 								ricount++;
 							}else{
-								me[mecount] = countBL;
+								me[mecount] = num;
 								mecount++;
 							}
 						}
@@ -353,6 +388,7 @@ public class MyAlg{
 		int score = 0;
 		int two = 0;
 		int three = 0;
+		int emptyThree = 0;
 		int four = 0;
 /*debug*//*   System.out.print("me: "); 
 			for(int i = 0; i < me.length; i++){
@@ -373,8 +409,10 @@ public class MyAlg{
 				three++;
 			}else if(me[i] == 4){
 				four++;
+			}else if(me[i] == 10){
+				emptyThree++;
 			}else if(me[i] >= 5){
-				score = 99999999;
+				score = 999999999;
 			}
 		}
 		//add the score of continuous two
@@ -389,17 +427,24 @@ public class MyAlg{
 		}else if(three == 2){
 			score = score + 6000;
 		}
+		//add the score of continuous three that's empty on both sides
+		if(emptyThree == 1){
+			score = score + 10000;
+		}else if(emptyThree == 2){
+			score = score + 20000;
+		}
 		//add the score of continuous four
 		if(four == 1){
-			score = score + 10000;
-		}else if(four == 2){
 			score = score + 20000;
+		}else if(four == 2){
+			score = score + 40000;
 		}
 
 /*debug*///	System.out.println("me: " + score);
 
 		two = 0;
 		three = 0;
+		emptyThree = 0;
 		four = 0;
 		for(int i = 0; i < rival.length; i++){
 			if(rival[i] == 1){
@@ -410,6 +455,8 @@ public class MyAlg{
 				three++;
 			}else if(rival[i] == 4){
 				four++;
+			}else if(rival[i] == 10){
+				emptyThree++;
 			}else if(rival[i] >= 5){
 				score = -99999999;
 			}
@@ -426,11 +473,17 @@ public class MyAlg{
 		}else if(three == 2){
 			score = score - 6000;
 		}
+		//add the score of continuous three that's empty on both sides
+		if(emptyThree == 1){
+			score = score - 20010;
+		}else if(emptyThree == 2){
+			score = score - 40010;
+		}
 		//add the score of continuous four
 		if(four == 1){
-			score = score - 10000;
+			score = score - 20010;
 		}else if(four == 2){
-			score = score - 20000;
+			score = score - 40010;
 		}
 
 /*debug*/// System.out.println("Final: " + score);
