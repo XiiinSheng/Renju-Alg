@@ -1,3 +1,9 @@
+/***********************
+*	Renju AI
+*	Copyright: Xin Sheng
+*	Description: calculates Renju best game theory using MinMax Theorem
+*/
+
 import java.util.Random;
 
 public class MyAlg{
@@ -37,10 +43,10 @@ public class MyAlg{
 
 		char row = (char)(index[0]+'@');
 		int col = index[1];
-/*debug*/   System.out.println("index: " + index[0] + " " + index[1]);
+/*debug*///   System.out.println("index: " + index[0] + " " + index[1]);
 		String result = "";
 
-/*debug*/		System.out.println("score of this move = " + score);
+/*debug*///		System.out.println("score of this move = " + score);
 		
 		return row + (result + col);
 	}
@@ -50,7 +56,7 @@ public class MyAlg{
 		char[][] boardStatic = new char[boardIn.length][boardIn.length];
 		copy(boardStatic,boardIn);
 		//stop the recursion by returning the board without change
-		if((depth == 0) || (isFull(boardStatic))){
+		if((depth == 0) || (isFull(boardStatic)) || (score(boardIn) >= 9999999) || (score(boardIn) <= -9999999)){
 			return score(boardIn);
 		}
 		if(me == true){
@@ -139,6 +145,8 @@ public class MyAlg{
 							int num = 0;
 							if(emptySideH == 2 && countH == 3){
 								num = 10;
+							}else if(emptySideH == 1 && countH == 4){
+								num = 11;
 							}else{
 								num = countH;
 							}
@@ -182,6 +190,8 @@ public class MyAlg{
 								int num = 0;
 							if(emptySideV == 2 && countV == 3){
 								num = 10;
+							}else if(emptySideV == 2 && countV == 4){
+								num = 11;
 							}else{
 								num = countV;
 							}
@@ -236,6 +246,8 @@ public class MyAlg{
 							int num = 0;
 							if(emptySideUR == 2 && countUR == 3){
 								num = 10;
+							}else if(emptySideUR == 2 && countUR == 4){
+								num = 11;
 							}else{
 								num = countUR;
 							}
@@ -278,6 +290,8 @@ public class MyAlg{
 							int num = 0;
 							if(emptySideUL == 2 && countUL == 3){
 								num = 10;
+							}else if(emptySideUL == 2 && countUL == 4){
+								num = 11;
 							}else{
 								num = countUL;
 							}
@@ -319,6 +333,8 @@ public class MyAlg{
 							int num = 0;
 							if(emptySideBR == 2 && countBR == 3){
 								num = 10;
+							}else if(emptySideBR == 2 && countBR == 4){
+								num = 11;
 							}else{
 								num = countBR;
 							}
@@ -361,6 +377,8 @@ public class MyAlg{
 							int num = 0;
 							if(emptySideBL == 2 && countBL == 3){
 								num = 10;
+							}else if(emptySideBL == 2 && countBL == 4){
+								num = 11;
 							}else{
 								num = countBL;
 							}
@@ -390,6 +408,7 @@ public class MyAlg{
 		int three = 0;
 		int emptyThree = 0;
 		int four = 0;
+		int emptyFour = 0;
 /*debug*//*   System.out.print("me: "); 
 			for(int i = 0; i < me.length; i++){
 				System.out.print(me[i] + " ");
@@ -411,6 +430,8 @@ public class MyAlg{
 				four++;
 			}else if(me[i] == 10){
 				emptyThree++;
+			}else if(me[i] == 11){
+				emptyFour++;
 			}else if(me[i] >= 5){
 				score = 999999999;
 			}
@@ -423,21 +444,27 @@ public class MyAlg{
 		}
 		//add the score of continuous three
 		if(three == 1){
-			score = score + 3000;
+			score = score + 1500;
 		}else if(three == 2){
-			score = score + 6000;
+			score = score + 2500;
 		}
 		//add the score of continuous three that's empty on both sides
 		if(emptyThree == 1){
-			score = score + 10000;
+			score = score + 28000;
 		}else if(emptyThree == 2){
-			score = score + 20000;
+			score = score + 40000;
 		}
 		//add the score of continuous four
 		if(four == 1){
-			score = score + 20000;
+			score = score + 23000;
 		}else if(four == 2){
-			score = score + 40000;
+			score = score + 30000;
+		}
+		//add the score of continuous four that's empty on both sides
+		if(emptyFour == 1){
+			score = score + 600000;
+		}else if(emptyFour == 2){
+			score = score + 800000;
 		}
 
 /*debug*///	System.out.println("me: " + score);
@@ -446,6 +473,8 @@ public class MyAlg{
 		three = 0;
 		emptyThree = 0;
 		four = 0;
+		emptyFour = 0;
+
 		for(int i = 0; i < rival.length; i++){
 			if(rival[i] == 1){
 				score = score - 11;
@@ -457,6 +486,8 @@ public class MyAlg{
 				four++;
 			}else if(rival[i] == 10){
 				emptyThree++;
+			}else if(rival[i] == 11){
+				emptyFour++;
 			}else if(rival[i] >= 5){
 				score = -99999999;
 			}
@@ -469,21 +500,27 @@ public class MyAlg{
 		}
 		//add the score of continuous three
 		if(three == 1){
-			score = score - 3000;
+			score = score - 1000;
 		}else if(three == 2){
-			score = score - 6000;
+			score = score - 2000;
 		}
 		//add the score of continuous three that's empty on both sides
 		if(emptyThree == 1){
-			score = score - 20010;
+			score = score - 35020;
 		}else if(emptyThree == 2){
-			score = score - 40010;
+			score = score - 60020;
 		}
 		//add the score of continuous four
 		if(four == 1){
-			score = score - 20010;
+			score = score - 28010;
 		}else if(four == 2){
-			score = score - 40010;
+			score = score - 50010;
+		}
+		//add the score of continuous four that's empty on both sides
+		if(emptyFour == 1){
+			score = score - 1000100;
+		}else if(emptyFour == 2){
+			score = score - 1200200;
 		}
 
 /*debug*/// System.out.println("Final: " + score);

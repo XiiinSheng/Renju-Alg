@@ -26,13 +26,16 @@ public class Renju{
 	static int MODE = 0;           // 1 is single player mode, 2 is multiplayer mode
 	static char turn = '\0';
 	static MyAlg comp = new MyAlg();
+	static boolean playAgain = true;
 	
 	public static void main(String[] args){
 		Scanner in = new Scanner(System.in);
-		char win = '\0';
+//		char win = '\0';
 		Renju obj = new Renju();
-
+		
+		while(Renju.playAgain == true){
 		// ask, create, initialize, and print the board
+		char win = '\0';
 		gameInit(in);
 /**/	char board[][] = new char[Renju.SIZE+1][Renju.SIZE+1];
 		boardInit(board);
@@ -47,6 +50,9 @@ public class Renju{
 			win = checkWin(win,board);
 		}
 		printWinner(win);
+
+		askWhetherPlayAgain(in);
+		}
 
 
 	}
@@ -297,5 +303,19 @@ public class Renju{
 		}
 	}
 
+	static void askWhetherPlayAgain(Scanner in){
+		String input = "";
+		while(true){
+			System.out.println("Play again? Y/N");
+			input = in.nextLine().toLowerCase();
+			if(input.equals("yes") || input.equals("y")){
+			   	Renju.playAgain = true;
+				return;
+			}else if(input.equals("no") || input.equals("n")){
+				Renju.playAgain = false;
+				return;
+			}
+		}
+	}
 }
 
