@@ -25,7 +25,7 @@ public class Renju{
 	static int WINCOND = 5;        // number of pieces to win: 1-9 (by default 5)
 	static int MODE = 0;           // 1 is single player mode, 2 is multiplayer mode
 	static char turn = '\0';
-	static MyAlg comp = new MyAlg();
+	static MyAlg2 comp = new MyAlg2();
 	static boolean playAgain = true;
 	
 	public static void main(String[] args){
