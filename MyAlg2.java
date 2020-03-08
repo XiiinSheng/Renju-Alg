@@ -229,9 +229,8 @@ public class MyAlg2{
 						emptySideV = 0;
 					}
 				}
-			}
-				//check diagonally, upper triangle
-			for(int i = 1; i < board.length; i++){
+			
+				//check diagonally
 				int countUL = 0;
 				int countUR = 0;
 				int countBL = 0;
@@ -328,6 +327,9 @@ public class MyAlg2{
 						countUL = 0;
 						emptySideUL = 0;
 					}
+					
+					if(i+j+1 < board.length){
+						i = i + 1;
 					//from bottom left to up right(lower triangle)
 					if(board[board.length-1-j][i+j] == symbol[k]){
 						countBR++;
@@ -416,6 +418,8 @@ public class MyAlg2{
 						countBL = 0;
 						emptySideBL = 0;
 					}
+					i = i - 1;
+					}
 				}
 			}
 		}
@@ -431,7 +435,7 @@ public class MyAlg2{
 		int four = 0;
 		int emptyFour = 0;
 
-/*debug*/   System.out.print("me: "); 
+/*debug*//*   System.out.print("me: "); 
 			for(int i = 0; i < me.length; i++){
 				System.out.print(me[i] + " ");
 			}
@@ -440,7 +444,7 @@ public class MyAlg2{
 			for(int j = 0; j < rival.length; j++){
 				System.out.print(rival[j] + " ");
 			}
-
+*/
 
 		for(int i = 0; i < me.length; i++){
 			if(me[i] == 2){
@@ -461,7 +465,11 @@ public class MyAlg2{
 		if(two == 1){
 			score = score + 200;
 		}else if(two == 2){
-			score = score + 500;
+			score = score + 400;
+		}else if(two == 3){
+			score = score + 600;
+		}else if(two >= 4){
+			score = score + 800;
 		}
 		//add the score of continuous three
 		if(three == 1){
@@ -477,14 +485,14 @@ public class MyAlg2{
 		}
 		//add the score of continuous four
 		if(four == 1){
-			score = score + 30000;
+			score = score + 31000;
 		}else if(four == 2){
 			score = score + 60000;
 		}
 		//add the score of continuous four that's empty on both sides
 		if(emptyFour == 1){
 			score = score + 600000;
-		}else if(emptyFour == 2){
+		}else if(emptyFour >= 2){
 			score = score + 800000;
 		}
 
@@ -511,12 +519,16 @@ public class MyAlg2{
 				score = -99999999;
 			}
 		}
-/*debug*/ System.out.println("Two: " + two);
+/*debug*/// System.out.println("Two: " + two);
 	//add the score of continuous two
 		if(two == 1){
 			score = score - 210;
 		}else if(two == 2){
-			score = score - 510;
+			score = score - 410;
+		}else if(two == 3){
+			score = score - 610;
+		}else if(two >= 4){
+			score= score - 810;
 		}
 		//add the score of continuous three
 		if(three == 1){
@@ -528,19 +540,19 @@ public class MyAlg2{
 		if(emptyThree == 1){
 			score = score - 40000;
 		}else if(emptyThree == 2){
-			score = score - 70000;
+			score = score - 75000;
 		}
 		//add the score of continuous four
 		if(four == 1){
 			score = score - 40000;
 		}else if(four == 2){
-			score = score - 70000;
+			score = score - 75000;
 		}
 		//add the score of continuous four that's empty on both sides
 		if(emptyFour == 1){
-			score = score - 800100;
-		}else if(emptyFour == 2){
-			score = score - 1000200;
+			score = score - 1000100;
+		}else if(emptyFour >= 2){
+			score = score - 1200200;
 		}
 
 /*debug*/// System.out.println("Final: " + score);
@@ -649,12 +661,12 @@ board[5][5] = 'O';
 
 
 	char[][] testFourR = {{' ','1','2','3','4','5','6'},
-					 {'A','O','-','-','-','-','-'},
-					 {'B','-','O','-','-','-','-'},
-					 {'C','-','-','-','-','-','-'},
+					 {'A','-','-','-','-','-','-'},
+					 {'B','-','-','-','-','-','-'},
+					 {'C','-','-','O','-','-','-'},
 					 {'D','-','-','-','O','-','-'},
 					 {'E','-','-','-','-','O','-'},
-					 {'F','-','-','-','-','-','-'}};
+					 {'F','-','-','-','-','-','O'}};
 
 
 }
