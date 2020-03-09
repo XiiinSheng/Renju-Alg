@@ -45,10 +45,10 @@ public class MyAlg2{
 
 		char row = (char)(index[0]+'@');
 		int col = index[1];
-/*debug*///   System.out.println("index: " + index[0] + " " + index[1]);
+/*debug*/   System.out.println("index: " + index[0] + " " + index[1]);
 		String result = "";
 
-/*debug*///		System.out.println("score of this move = " + score);
+/*debug*/		System.out.println("score of this move = " + score);
 		
 		return row + (result + col);
 	}
@@ -71,6 +71,7 @@ public class MyAlg2{
 						copy(board1,boardStatic);
 						board1[i][j] = 'X';
 						int score = bestMove(index, board1, depth-1, false, thisAB);
+/*debug*///					System.out.println("ME: depth: " + depth + ", index = " + i + " " + j + ", score = " + score);
 						if(value < score){
 							boardIn = board1;
 							index[0] = i;
@@ -99,6 +100,7 @@ public class MyAlg2{
 						copy(board2,boardStatic);
 						board2[i][j] = 'O';
 						int score = bestMove(index, board2, depth-1, true, thisAB);
+/*debug*///					System.out.println("RIVAL: depth: " + depth + ", index = " + i + " " + j + ", score = " + score);
 						if(value > score){
 							boardIn = board2;
 							value = score;
@@ -146,7 +148,7 @@ public class MyAlg2{
 					       board[i][j-1] == '-'){
 							emptySideH++;
 						}
-						if(countH > 1 && (emptySideH != 0) && (j == board.length-1)){
+						if(j == board.length-1 && countH > 1 && (emptySideH != 0 || countH >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countH;
 								ricount++;
@@ -192,7 +194,7 @@ public class MyAlg2{
 						   board[j-1][i] == '-'){
 							emptySideV++;
 						}
-						if(countV > 1 && emptySideV != 0 && j == board.length-1){
+						if(j == board.length-1 && countV > 1 && (emptySideV != 0 || countV >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countV;
 								ricount++;
@@ -247,7 +249,7 @@ public class MyAlg2{
 						if(board[j][i+j-1] == '-'){
 							emptySideUR++;
 						}
-						if(countUR > 1 && emptySideUR != 0 && i+j == board.length-1){
+						if(i+j == board.length-1 && countUR > 1 && (emptySideUR != 0 || countUR >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countUR;
 								ricount++;
@@ -290,7 +292,7 @@ public class MyAlg2{
 					       board[j][board.length-i-j+1] == '-'){
 							emptySideUL++;
 						}
-						if(countUL > 1 && emptySideUL != 0 && board.length-i-j == 1){
+						if(board.length-i-j == 1 && countUL > 1 && (emptySideUL != 0 || countUL >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countUL;
 								ricount++;
@@ -337,7 +339,7 @@ public class MyAlg2{
   					   	   board[board.length-j][i+j-1] == '-'){
 							emptySideBR++;
 						}
-						if(countBR > 1 && emptySideBR != 0 && i+j == board.length-1){
+						if(i+j == board.length-1 && countBR > 1 && (emptySideBR != 0 || countBR >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countBR;
 								ricount++;
@@ -381,7 +383,7 @@ public class MyAlg2{
 					       board[board.length-j][board.length-i-j+1] == '-'){
 							emptySideBL++;
 						}
-						if(countBL > 1 && emptySideBL != 0 && board.length-i-j == 1){
+						if(board.length-i-j == 1 && countBL > 1 && (emptySideBL != 0 || countBL >= 5)){
 							if(symbol[k] == 'O'){
 								rival[ricount] = countBL;
 								ricount++;
@@ -435,7 +437,7 @@ public class MyAlg2{
 		int four = 0;
 		int emptyFour = 0;
 
-/*debug*//*   System.out.print("me: "); 
+/*debug*/   System.out.print("me: "); 
 			for(int i = 0; i < me.length; i++){
 				System.out.print(me[i] + " ");
 			}
@@ -444,7 +446,7 @@ public class MyAlg2{
 			for(int j = 0; j < rival.length; j++){
 				System.out.print(rival[j] + " ");
 			}
-*/
+
 
 		for(int i = 0; i < me.length; i++){
 			if(me[i] == 2){
@@ -660,13 +662,13 @@ board[5][5] = 'O';
 					 {'F','-','-','-','-','-','-'}};
 
 
-	char[][] testFourR = {{' ','1','2','3','4','5','6'},
-					 {'A','-','-','-','-','-','-'},
-					 {'B','-','-','-','-','-','-'},
-					 {'C','-','-','O','-','-','-'},
-					 {'D','-','-','-','O','-','-'},
-					 {'E','-','-','-','-','O','-'},
-					 {'F','-','-','-','-','-','O'}};
-
+   char[][] testFourR = {{' ','1','2','3','4','5','6','7'},
+                        {'A','-','-','-','-','-','-','-'},
+					    {'B','-','-','-','-','-','-','-'},
+						{'C','X','-','-','-','-','-','-'},
+						{'D','-','X','-','-','-','-','-'},
+						{'E','-','-','X','-','-','-','-'},
+						{'F','-','-','-','X','-','-','-'},
+						{'G','-','-','-','-','X','-','-'}};
 
 }
