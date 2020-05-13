@@ -10,6 +10,9 @@ public class MyAlg{
 	static char me = 'X';
 	static char rival = 'O';
 
+	public String getVersion(){
+		return "V1";
+	}
 
 /* Original random drop method
 
@@ -25,7 +28,7 @@ public class MyAlg{
 	public String autoDrop(char[][] initialBoard){
 		int index[] = new int[2];
 
-/**/	int depth = 2;
+/**/	int depth = 3;
 		int score = 0;
 
 		if(isAlmostEmpty(initialBoard)){

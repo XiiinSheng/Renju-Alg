@@ -11,7 +11,9 @@ public class MyAlg2{
 	static char me = 'X';
 	static char rival = 'O';
 
-
+	public String getVersion(){
+		return "V2";
+	}
 /* Original random drop method
 
 	public String autoDrop(char[][] board){
@@ -26,7 +28,7 @@ public class MyAlg2{
 	public String autoDrop(char[][] initialBoard){
 		int index[] = new int[2];
 
-/**/	int depth = 3;
+/**/	int depth = 2;
 		int score = 0;
 		int[] alphaBeta = {-999999999,999999999};
 
@@ -70,7 +72,8 @@ public class MyAlg2{
 						char[][] board1 = new char[boardStatic.length][boardStatic.length];
 						copy(board1,boardStatic);
 						board1[i][j] = 'X';
-						int score = bestMove(index, board1, depth-1, false, thisAB);
+						int[] newIndex = new int[2];
+						int score = bestMove(newIndex, board1, depth-1, false, thisAB);
 /*debug*///					System.out.println("ME: depth: " + depth + ", index = " + i + " " + j + ", score = " + score);
 						if(value < score){
 							boardIn = board1;
@@ -78,6 +81,7 @@ public class MyAlg2{
 							index[1] = j;
 							value = score;
 							thisAB[0] = Math.max(thisAB[0],score);
+/*debug*///					System.out.println("Index: " + index[0] + " " + index[1]);
 						}
 						if(thisAB[0] >= thisAB[1]){
 							int min = Math.min(thisAB[0], thisAB[1]);
@@ -105,6 +109,7 @@ public class MyAlg2{
 							boardIn = board2;
 							value = score;
 							thisAB[1] = Math.min(thisAB[1],score);
+/*debug*///					System.out.println("Index: " + index[0] + " " + index[1]);
 						}
 						if(thisAB[0] >= thisAB[1]){
 							int max = Math.max(thisAB[0], thisAB[1]);
@@ -125,11 +130,10 @@ public class MyAlg2{
 
 	//FIXME:check the score of the board
 	static int score(char[][] board){
-		char symbol[] = {MyAlg.rival, MyAlg.me};
-		int[] me = new int[50];
-		int mecount = 0;
-		int[] rival = new int[50];
-		int ricount = 0;
+		char symbol[] = {MyAlg2.rival, MyAlg2.me};
+		int[] me = new int[8];
+		int[] rival = new int[8];
+
 		//first check O then check X
 		for(int k = 0; k < symbol.length; k++){
 			
@@ -150,11 +154,9 @@ public class MyAlg2{
 						}
 						if(j == board.length-1 && countH > 1 && (emptySideH != 0 || countH >= 5)){
 							if(symbol[k] == 'O'){
-								rival[ricount] = countH;
-								ricount++;
+								rival[countH]++;
 							}else{
-								me[mecount] = countH;
-								mecount++;
+								me[countH]++;
 							}
 						}
 	
@@ -167,19 +169,17 @@ public class MyAlg2{
 						if(countH > 1 && (emptySideH != 0 || countH >= 5)){
 							int num = 0;
 							if(emptySideH == 2 && countH == 3){
-								num = 10;
-							}else if(emptySideH == 1 && countH == 4){
-								num = 11;
+								num = 0;
+							}else if(emptySideH == 2 && countH == 4){
+								num = 1;
 							}else{
 								num = countH;
 							}
 							
 							if(symbol[k] == 'O'){
-								rival[ricount] = num;
-								ricount++;
+								rival[num]++;
 							}else{
-								me[mecount] = num;
-								mecount++;
+								me[num]++;
 							}
 						}
 /*debug*/	//					System.out.print(countH + " ");
@@ -196,11 +196,9 @@ public class MyAlg2{
 						}
 						if(j == board.length-1 && countV > 1 && (emptySideV != 0 || countV >= 5)){
 							if(symbol[k] == 'O'){
-								rival[ricount] = countV;
-								ricount++;
+								rival[countV]++;
 							}else{
-								me[mecount] = countV;
-								mecount++;
+								me[countV]++;
 							}
 						}
 	
@@ -212,19 +210,17 @@ public class MyAlg2{
 						if(countV > 1 && (emptySideV != 0 || countV >= 5)){
 								int num = 0;
 							if(emptySideV == 2 && countV == 3){
-								num = 10;
+								num = 0;
 							}else if(emptySideV == 2 && countV == 4){
-								num = 11;
+								num = 1;
 							}else{
 								num = countV;
 							}
 
 							if(symbol[k] == 'O'){
-								rival[ricount] = num;
-								ricount++;
+								rival[num]++;
 							}else{
-								me[mecount] = num;
-								mecount++;
+								me[num]++;
 							}
 						}
 						countV = 0;
@@ -251,11 +247,9 @@ public class MyAlg2{
 						}
 						if(i+j == board.length-1 && countUR > 1 && (emptySideUR != 0 || countUR >= 5)){
 							if(symbol[k] == 'O'){
-								rival[ricount] = countUR;
-								ricount++;
+								rival[countUR]++;
 							}else{
-								me[mecount] = countUR;
-								mecount++;
+								me[countUR]++;
 							}
 						}
 	
@@ -267,19 +261,17 @@ public class MyAlg2{
 						if(countUR > 1 && (emptySideUR != 0 || countUR >= 5)){
 							int num = 0;
 							if(emptySideUR == 2 && countUR == 3){
-								num = 10;
+								num = 0;
 							}else if(emptySideUR == 2 && countUR == 4){
-								num = 11;
+								num = 1;
 							}else{
 								num = countUR;
 							}
 	
 							if(symbol[k] == 'O'){
-								rival[ricount] = num;
-								ricount++;
+								rival[num]++;
 							}else{
-								me[mecount] = num;
-								mecount++;
+								me[num]++;
 							}
 						}
 						countUR = 0;
@@ -294,11 +286,9 @@ public class MyAlg2{
 						}
 						if(board.length-i-j == 1 && countUL > 1 && (emptySideUL != 0 || countUL >= 5)){
 							if(symbol[k] == 'O'){
-								rival[ricount] = countUL;
-								ricount++;
+								rival[countUL]++;
 							}else{
-								me[mecount] = countUL;
-								mecount++;
+								me[countUL]++;
 							}
 						}
 	
@@ -311,19 +301,17 @@ public class MyAlg2{
 						if(countUL > 1 && (emptySideUL != 0 || countUL >= 5)){
 							int num = 0;
 							if(emptySideUL == 2 && countUL == 3){
-								num = 10;
+								num = 0;
 							}else if(emptySideUL == 2 && countUL == 4){
-								num = 11;
+								num = 1;
 							}else{
 								num = countUL;
 							}
 	
 							if(symbol[k] == 'O'){
-								rival[ricount] = num;
-								ricount++;
+								rival[num]++;
 							}else{
-								me[mecount] = num;
-								mecount++;
+								me[num]++;
 							}
 						}
 						countUL = 0;
@@ -341,11 +329,9 @@ public class MyAlg2{
 						}
 						if(i+j == board.length-1 && countBR > 1 && (emptySideBR != 0 || countBR >= 5)){
 							if(symbol[k] == 'O'){
-								rival[ricount] = countBR;
-								ricount++;
+								rival[countBR]++;
 							}else{
-								me[mecount] = countBR;
-								mecount++;
+								me[countBR]++;
 							}
 						}
 	
@@ -357,19 +343,17 @@ public class MyAlg2{
 						if(countBR > 1 && (emptySideBR != 0 || countBR >= 5)){
 							int num = 0;
 							if(emptySideBR == 2 && countBR == 3){
-								num = 10;
+								num = 0;
 							}else if(emptySideBR == 2 && countBR == 4){
-								num = 11;
+								num = 1;
 							}else{
 								num = countBR;
 							}
 	
 							if(symbol[k] == 'O'){
-								rival[ricount] = num;
-								ricount++;
+								rival[num]++;
 							}else{
-								me[mecount] = num;
-								mecount++;
+								me[num]++;
 							}
 						}
 						countBR = 0;
@@ -385,11 +369,9 @@ public class MyAlg2{
 						}
 						if(board.length-i-j == 1 && countBL > 1 && (emptySideBL != 0 || countBL >= 5)){
 							if(symbol[k] == 'O'){
-								rival[ricount] = countBL;
-								ricount++;
+								rival[countBL]++;
 							}else{
-								me[mecount] = countBL;
-								mecount++;
+								me[countBL]++;
 							}
 						}
 	
@@ -401,19 +383,17 @@ public class MyAlg2{
 						if(countBL > 1 && (emptySideBL != 0 || countBL >= 5)){
 							int num = 0;
 							if(emptySideBL == 2 && countBL == 3){
-								num = 10;
+								num = 0;
 							}else if(emptySideBL == 2 && countBL == 4){
-								num = 11;
+								num = 1;
 							}else{
 								num = countBL;
 							}
 	
 							if(symbol[k] == 'O'){
-								rival[ricount] = num;
-								ricount++;
+								rival[num]++;
 							}else{
-								me[mecount] = num;
-								mecount++;
+								me[num]++;
 							}
 						}
 	
@@ -431,13 +411,8 @@ public class MyAlg2{
 
 	static int finalScore(int[] me, int[] rival){
 		int score = 0;
-		int two = 0;
-		int three = 0;
-		int emptyThree = 0;
-		int four = 0;
-		int emptyFour = 0;
 
-/*debug*/   System.out.print("me: "); 
+/*debug*//*   System.out.print("me: "); 
 			for(int i = 0; i < me.length; i++){
 				System.out.print(me[i] + " ");
 			}
@@ -446,115 +421,86 @@ public class MyAlg2{
 			for(int j = 0; j < rival.length; j++){
 				System.out.print(rival[j] + " ");
 			}
+*/
 
-
-		for(int i = 0; i < me.length; i++){
-			if(me[i] == 2){
-				two++;
-			}else if(me[i] == 3){
-				three++;
-			}else if(me[i] == 4){
-				four++;
-			}else if(me[i] == 10){
-				emptyThree++;
-			}else if(me[i] == 11){
-				emptyFour++;
-			}else if(me[i] >= 5){
-				score = 999999999;
-			}
-		}
 		//add the score of continuous two
-		if(two == 1){
+		if(me[2] == 1){
 			score = score + 200;
-		}else if(two == 2){
+		}else if(me[2] == 2){
 			score = score + 400;
-		}else if(two == 3){
+		}else if(me[2] == 3){
 			score = score + 600;
-		}else if(two >= 4){
+		}else if(me[2] >= 4){
 			score = score + 800;
 		}
 		//add the score of continuous three
-		if(three == 1){
+		if(me[3] == 1){
 			score = score + 1000;
-		}else if(three == 2){
+		}else if(me[3] >= 2){
 			score = score + 2000;
 		}
 		//add the score of continuous three that's empty on both sides
-		if(emptyThree == 1){
+		if(me[0] == 1){
+			score = score + 20000;
+		}else if(me[0] >= 2){
 			score = score + 30000;
-		}else if(emptyThree == 2){
-			score = score + 65000;
 		}
 		//add the score of continuous four
-		if(four == 1){
-			score = score + 31000;
-		}else if(four == 2){
+		if(me[4] == 1){
+			score = score + 30000;
+		}else if(me[4] >= 2){
 			score = score + 60000;
 		}
 		//add the score of continuous four that's empty on both sides
-		if(emptyFour == 1){
-			score = score + 600000;
-		}else if(emptyFour >= 2){
-			score = score + 800000;
+		if(me[1] == 1){
+			score = score + 1000000;
+		}else if(me[1] >= 2){
+			score = score + 1200000;
+		}
+		//add the score of fives
+		if(me[5] != 0 || me[6] != 0 || me[7] != 0){
+			score = 99999999;
 		}
 
 /*debug*///	System.out.println("me: " + score);
 
-		two = 0;
-		three = 0;
-		emptyThree = 0;
-		four = 0;
-		emptyFour = 0;
-
-		for(int i = 0; i < rival.length; i++){
-			if(rival[i] == 2){
-				two++;
-			}else if(rival[i] == 3){
-				three++;
-			}else if(rival[i] == 4){
-				four++;
-			}else if(rival[i] == 10){
-				emptyThree++;
-			}else if(rival[i] == 11){
-				emptyFour++;
-			}else if(rival[i] >= 5){
-				score = -99999999;
-			}
-		}
-/*debug*/// System.out.println("Two: " + two);
 	//add the score of continuous two
-		if(two == 1){
+		if(rival[2] == 1){
 			score = score - 210;
-		}else if(two == 2){
+		}else if(rival[2] == 2){
 			score = score - 410;
-		}else if(two == 3){
+		}else if(rival[2] == 3){
 			score = score - 610;
-		}else if(two >= 4){
+		}else if(rival[2] >= 4){
 			score= score - 810;
 		}
 		//add the score of continuous three
-		if(three == 1){
+		if(rival[3] == 1){
 			score = score - 1010;
-		}else if(three == 2){
+		}else if(rival[3] >= 2){
 			score = score - 2010;
 		}
 		//add the score of continuous three that's empty on both sides
-		if(emptyThree == 1){
-			score = score - 40000;
-		}else if(emptyThree == 2){
-			score = score - 75000;
+		if(rival[0] == 1){
+			score = score - 20000;
+		}else if(rival[0] >= 2){
+			score = score - 35000;
 		}
 		//add the score of continuous four
-		if(four == 1){
-			score = score - 40000;
-		}else if(four == 2){
-			score = score - 75000;
+		if(rival[4] == 1){
+			score = score - 30000;
+		}else if(rival[4] >= 2){
+			score = score - 50000;
 		}
 		//add the score of continuous four that's empty on both sides
-		if(emptyFour == 1){
-			score = score - 1000100;
-		}else if(emptyFour >= 2){
-			score = score - 1200200;
+		if(rival[1] == 1){
+			score = score - 900000;
+		}else if(rival[1] >= 2){
+			score = score - 110000;
+		}
+		//add the score of fives
+		if(rival[5] != 0 || rival[6] != 0 || rival[7] != 0 ){
+			score = -99999999;
 		}
 
 /*debug*/// System.out.println("Final: " + score);
@@ -646,9 +592,9 @@ board[5][5] = 'O';
 	char[][] testFiveR = {{' ','1','2','3','4','5','6','7'},
 					 {'A','-','-','-','-','-','-','-'},
 					 {'B','-','-','-','-','-','-','-'},
-					 {'C','-','O','-','-','-','-','-'},
-					 {'D','-','-','-','-','-','-','-'},
-					 {'E','-','-','-','-','-','-','-'},
+					 {'C','-','O','O','-','-','-','-'},
+					 {'D','-','-','O','-','-','-','-'},
+					 {'E','-','-','-','O','-','-','-'},
 					 {'F','-','-','-','-','-','-','-'},
 					 {'G','-','-','-','-','-','-','-'}};
 
@@ -656,19 +602,23 @@ board[5][5] = 'O';
 	char[][] testFiveM = {{' ','1','2','3','4','5','6'},
 					 {'A','-','-','-','-','-','-'},
 					 {'B','-','-','-','-','-','-'},
-					 {'C','-','X','X','X','X','X'},
+					 {'C','-','-','X','X','X','X'},
 					 {'D','-','-','-','-','-','-'},
 					 {'E','-','-','-','-','-','-'},
 					 {'F','-','-','-','-','-','-'}};
 
 
-   char[][] testFourR = {{' ','1','2','3','4','5','6','7'},
-                        {'A','-','-','-','-','-','-','-'},
-					    {'B','-','-','-','-','-','-','-'},
-						{'C','X','-','-','-','-','-','-'},
-						{'D','-','X','-','-','-','-','-'},
-						{'E','-','-','X','-','-','-','-'},
-						{'F','-','-','-','X','-','-','-'},
-						{'G','-','-','-','-','X','-','-'}};
+   char[][] testFourR = {{' ','1','2','3','4','5','6','7','8','9',':',';'},
+                        {'A','-','-','-','-','-','-','-','-','-','-','-'},
+                        {'B','-','-','-','-','-','-','-','-','-','-','-'},
+                        {'C','-','-','-','-','-','-','-','-','-','-','-'},
+                        {'D','-','-','-','-','-','-','-','-','-','-','-'},
+                        {'E','-','-','-','-','-','O','-','-','-','-','-'},
+					    {'F','-','-','-','X','-','-','O','-','-','-','-'},
+						{'G','-','-','-','-','X','-','-','O','-','-','-'},
+						{'H','-','-','-','-','-','X','-','-','-','-','-'},
+						{'I','-','-','-','-','-','-','-','-','-','-','-'},
+						{'J','-','-','-','-','-','-','-','-','-','-','-'},
+						{'K','-','-','-','-','-','-','-','-','-','-','-'}};
 
 }

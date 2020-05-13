@@ -60,6 +60,7 @@ public class Renju{
 		//prompt the player to choose mode, size, winCondition
 	static void gameInit(Scanner in){
 		System.out.println("Welcome to Renju Game (by Xin Sheng)");
+		System.out.println("(Version: " + comp.getVersion() + ")");
 		while(Renju.MODE != 1 && Renju.MODE != 2){
 			System.out.println("Choose mode:\n1: single player mode\n2: multiplayer mode");
 			String inputMode = in.nextLine();
