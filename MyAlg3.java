@@ -1,24 +1,25 @@
 /***************************************************************************
- * File Name: MyAlg2.java	
+ * File Name: MyAlg3.java	
  * Copyright: Xin Sheng
  * Description: Renju AI for Renju.java. 
- *              Depth 2. (one comp's move, one rival's move, calculate score)
+ *              Depth 3. (one comp's move, one rival's move, one comp's move, 
+ *				calculate score)
  *              Calculates Renju best game theory using MinMax Theorem.
  ***************************************************************************/
 
 import java.util.Random;
 import java.util.*;
 
-public class MyAlg2{
+public class MyAlg3{
 	//symbol for computer's piece and rival's piece
 	static char me = 'X';
 	static char rival = 'O';
 
 	//MinMax Theorem depth
-	public static final int depth = 2;
+	public static final int depth = 3;
 
 	public String getVersion(){
-		return "V2";
+		return "V3";
 	}
 
 /* Original random drop method
@@ -42,7 +43,7 @@ public class MyAlg2{
 		//the array to store best move position
 		int index[] = new int[2];
 
-		int depth = MyAlg2.depth;
+		int depth = MyAlg3.depth;
 		int score = 0;
 		int[] alphaBeta = {-999999999,999999999};
 	
@@ -174,7 +175,7 @@ public class MyAlg2{
 	 * @return int of score. 
 	 */
 	static int score(char[][] board){
-		char symbol[] = {MyAlg2.rival, MyAlg2.me}; //symbol of pieces
+		char symbol[] = {MyAlg3.rival, MyAlg3.me}; //symbol of pieces
 		int[] me = new int[8];     //array to record connected pieces
 		int[] rival = new int[8];  //array to record connected pieces
 
@@ -517,9 +518,9 @@ public class MyAlg2{
 		}
 		//add the score of continuous three that's empty on both sides
 		if(me[0] == 1){
-			score = score + 20000;
-		}else if(me[0] >= 2){
 			score = score + 30000;
+		}else if(me[0] >= 2){
+			score = score + 50000;
 		}
 		//add the score of continuous four
 		if(me[4] == 1){
@@ -529,13 +530,13 @@ public class MyAlg2{
 		}
 		//add the score of continuous four that's empty on both sides
 		if(me[1] == 1){
-			score = score + 1000000;
+			score = score + 800000;
 		}else if(me[1] >= 2){
-			score = score + 1200000;
+			score = score + 900000;
 		}
 		//add the score of fives
 		if(me[5] != 0 || me[6] != 0 || me[7] != 0){
-			score = 99999999;
+			score += 99999999;
 		}
 
 /*debug*///	System.out.println("me: " + score);
@@ -558,25 +559,25 @@ public class MyAlg2{
 		}
 		//add the score of continuous three that's empty on both sides
 		if(rival[0] == 1){
-			score = score - 20000;
+			score = score - 60000;
 		}else if(rival[0] >= 2){
-			score = score - 35000;
+			score = score - 80000;
 		}
 		//add the score of continuous four
 		if(rival[4] == 1){
-			score = score - 30000;
+			score = score - 60000;
 		}else if(rival[4] >= 2){
-			score = score - 50000;
+			score = score - 80000;
 		}
 		//add the score of continuous four that's empty on both sides
 		if(rival[1] == 1){
-			score = score - 900000;
+			score = score - 1000000;
 		}else if(rival[1] >= 2){
-			score = score - 110000;
+			score = score - 1200000;
 		}
 		//add the score of fives
 		if(rival[5] != 0 || rival[6] != 0 || rival[7] != 0 ){
-			score = -99999999;
+			score = score -99999999;
 		}
 
 /*debug*/// System.out.println("Final: " + score);
@@ -646,7 +647,7 @@ public class MyAlg2{
 	}
 
 	public static void main(String[] args){
-		MyAlg2 obj = new MyAlg2();
+		MyAlg3 obj = new MyAlg3();
 
 //		System.out.println(obj.autoDrop(board));
 		
@@ -660,10 +661,10 @@ public class MyAlg2{
                     {'B','-','-','-','-','-','-','-','-','-','-','-'},
                     {'C','-','-','-','-','-','-','-','-','-','-','-'},
                     {'D','-','-','-','-','-','-','-','-','-','-','-'},
-                    {'E','-','-','-','-','-','-','-','-','-','-','-'},
-				    {'F','-','-','-','X','O','-','O','-','-','-','-'},
-	 				{'G','-','-','-','O','X','-','-','O','-','-','-'},
-					{'H','-','-','-','-','-','-','-','-','-','-','-'},
+                    {'E','-','-','-','O','-','-','-','-','-','-','-'},
+				    {'F','-','-','-','-','O','-','-','-','-','-','-'},
+	 				{'G','-','-','-','-','-','O','-','-','-','-','-'},
+					{'H','-','-','-','-','-','-','O','-','-','-','-'},
 					{'I','-','-','-','-','-','-','-','-','-','-','-'},
 					{'J','-','-','-','-','-','-','-','-','-','-','-'},
 					{'K','-','-','-','-','-','-','-','-','-','-','-'}};
