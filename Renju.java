@@ -1,13 +1,15 @@
 /************************************************
 * 		Renju game
-* Description: two-player board game that one player wins when forms certain 
+* Description: two-player board game that one player wins when forms certain
 *			   number of pieces in a line
 * 			   winning condition: one player gets 5 pieces(default) in a row/col/diagonal
 * Mode: 	   Single player: one user compete with the computer
 * 		   	   Multiplayer: two users compete with each other
 * Board Size:  configured, choose from 5 to 16
 * Author:      Xin Sheng
-* Related files: MyAlg2.java, MyAlg3.java, etc               
+* Related files: MyAlg2.java, MyAlg3.java, etc
+* Create date: 2020.02.26
+* Last modified: 2020.05.21
 *
 ************************************************/
 
@@ -17,7 +19,7 @@ import java.util.Random;
 
 public class Renju{
 	//constant strings for player rotation display
-	static final String displayA = "         --> Player O                Player X     ";  
+	static final String displayA = "         --> Player O                Player X     ";
 	static final String displayB = "             Player O                Player X <-- ";
 	static final String displayC = "         --> Player O                Computer X     ";
 	static final String displayD = "             Player O                Computer X <-- ";
@@ -27,13 +29,13 @@ public class Renju{
 	static int WINCOND = 5;        // number of pieces to win: 5
 	static int MODE = 0;           // 1 is single player mode, 2 is multiplayer mode
 	static char turn = '\0';	   // record who is playing now
-	static MyAlg3 comp = new MyAlg3();   //AI object of computer
+	static MyAlg2 comp = new MyAlg2();   //AI object of computer
 	static boolean playAgain = true;     //whether the player wants to play again
-	
+
 	public static void main(String[] args){
 		Scanner in = new Scanner(System.in);
 		Renju obj = new Renju();
-		
+
 		while(Renju.playAgain == true){
 		// ask, create, initialize, and print the board
 		char win = '\0';
@@ -49,7 +51,7 @@ public class Renju{
 			oneDrop(in,board);
 			printBoard(board);
 			System.out.print("   Drop:   ");
-		
+
 			//check whether anyone wins
 			win = checkWin(win,board);
 		}
@@ -63,13 +65,14 @@ public class Renju{
 
 	/**
 	 * Prompt the player to choose mode, size, winCondition at the beginning
-	 * of game. 
-	 * 
-	 * @param in Scanner object for input. 
+	 * of game.
+	 *
+	 * @param in Scanner object for input.
 	 */
 	static void gameInit(Scanner in){
 		System.out.println("Welcome to Renju Game (by Xin Sheng)");
 		System.out.println("(Version: " + comp.getVersion() + ")");
+		System.out.println("(To type a drop: character + number)\n");
 		//choose mode (singlePlayer/multiPlayer)
 		while(Renju.MODE != 1 && Renju.MODE != 2){
 			System.out.println("Choose mode:\n1: single player mode\n2: multiplayer mode");
@@ -141,7 +144,7 @@ public class Renju{
 		}
 	}
 
-	/** 
+	/**
 	 * Randomly initialize the first player to start.
 	 *
 	 * @return char of the player to start. (A or B)
@@ -156,7 +159,7 @@ public class Renju{
 		}
 	}
 
-	/** 
+	/**
 	 * Change and print the turn of player.
 	 */
 	static void printTurn(){
@@ -178,12 +181,12 @@ public class Renju{
 		}
 		System.out.println("");
 	}
-	
+
 	/**
 	 * Prompt one drop from user or computer, and process it onto the board.
 	 *
-	 * @param in Scanner object for input. 
-	 * @param board The current board status. 
+	 * @param in Scanner object for input.
+	 * @param board The current board status.
 	 */
 	static void oneDrop(Scanner in, char[][] board){
 		String input = "";
@@ -208,7 +211,7 @@ public class Renju{
 				System.out.println("Computer input: " + input);
 			//if it's player's role, prompt for a move
 			}else{
-				input = in.nextLine();
+				input = in.nextLine().toUpperCase();
 				System.out.println("Your input: " + input);
 			}
 			//continue looping if input is not valid
@@ -237,10 +240,10 @@ public class Renju{
 
 	}
 
-	/** 
+	/**
 	 * Check if anyone wins.
 	 *
-	 * @param win Char condition to track whether anyone wins. 
+	 * @param win Char condition to track whether anyone wins.
 	 * @param board The board to be checked.
 	 * @return the winner
 	 */
@@ -271,7 +274,7 @@ public class Renju{
 
 			//check diagonally, upper triangle
 			for(int i = 1; i < board.length; i++){
-				int countUL = 0; 
+				int countUL = 0;
 				int countUR = 0;
 				int countBL = 0;
 				int countBR = 0;
@@ -300,7 +303,7 @@ public class Renju{
 					}else{
 						countBL = 0;
 					}
-					if(countUR >= Renju.WINCOND 
+					if(countUR >= Renju.WINCOND
 						|| countUL >= Renju.WINCOND
 						|| countBR >= Renju.WINCOND
 						|| countBL >= Renju.WINCOND){
@@ -323,8 +326,8 @@ public class Renju{
 		}
 		if(emptyCount == 0){
 			return 'D';
-		}			
-		
+		}
+
 		return win;
 	}
 
@@ -363,4 +366,3 @@ public class Renju{
 		}
 	}
 }
-
